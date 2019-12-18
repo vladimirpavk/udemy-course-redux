@@ -7,6 +7,8 @@ import CounterOutput from '../../components/CounterOutput/CounterOutput';
 class Counter extends Component {
     constructor(props){
         super(props);
+
+        console.dir(props);
     }
 
    /*  componentDidUpdate(prevProps, prevState){
@@ -21,11 +23,11 @@ class Counter extends Component {
         switch ( action ) {
             case 'inc':
                 //this.setState( ( prevState ) => { return { counter: prevState.counter + 1 } } )
-                this.props.addCounter(1);
+                this.props.incCounter();
                 break;
             case 'dec':
                 //this.setState( ( prevState ) => { return { counter: prevState.counter - 1 } } )
-                this.props.subCounter(1);
+                this.props.decCounter();
                 break;
             case 'add':
                 //this.setState( ( prevState ) => { return { counter: prevState.counter + value } } )
@@ -38,6 +40,10 @@ class Counter extends Component {
         }
     }
 
+    onResultValueClicked = (id)=>{
+        this.props.removeResult(id);
+    }
+
     render () {
         return (
             <div>
@@ -47,6 +53,15 @@ class Counter extends Component {
                 <CounterControl label="Decrement" clicked={() => this.counterChangedHandler( 'dec' )}  />
                 <CounterControl label="Add 5" clicked={() => this.counterChangedHandler( 'add', 5 )}  />
                 <CounterControl label="Subtract 5" clicked={() => this.counterChangedHandler( 'sub', 5 )}  />
+                <hr />
+                <button onClick={this.props.addResult}>Add result</button>
+                <ul>
+                    {this.props.resultsValue.map((result)=>{
+                        return (
+                            <li key={result.id} onClick={()=>this.onResultValueClicked(result.id)}>{result.value}</li>
+                        )
+                    })}
+                </ul>
             </div>
         );
     }
@@ -54,12 +69,23 @@ class Counter extends Component {
 
 const mapStateToProps = (state)=>{
     return {
-        counterValue: state.counter
+        counterValue: state.counter,
+        resultsValue: state.results
     }
 }    
 
 const mapDispatchToProps = (dispatch)=>{
     return{
+            incCounter: ()=>{
+                dispatch({
+                    type: 'INC_COUNTER'
+                })
+            },
+            decCounter: ()=>{
+                dispatch({
+                    type: 'DEC_COUNTER'
+                })
+            },
             addCounter: (increment)=>{
                 dispatch(
                     { 
@@ -73,7 +99,9 @@ const mapDispatchToProps = (dispatch)=>{
                     type: 'SUB_COUNTER',
                     payload: decrement
                 })
-            }
+            },
+            addResult: ()=>dispatch({type:'ADD_RESULT'}),
+            removeResult: (id)=>dispatch({type:'REMOVE_RESULT', payload: id})
     }
 }
 
