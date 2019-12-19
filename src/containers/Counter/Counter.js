@@ -4,16 +4,12 @@ import { connect } from 'react-redux';
 import CounterControl from '../../components/CounterControl/CounterControl';
 import CounterOutput from '../../components/CounterOutput/CounterOutput';
 
+import * as ACTIONS from '../../store/actions';
+
 class Counter extends Component {
     constructor(props){
         super(props);
-
-        console.dir(props);
     }
-
-   /*  componentDidUpdate(prevProps, prevState){
-        console.log(this.props.counterValue);
-    } */
 
     state = {
         counter: 0
@@ -37,6 +33,8 @@ class Counter extends Component {
                 //this.setState( ( prevState ) => { return { counter: prevState.counter - value } } )
                 this.props.subCounter(value);
                 break;
+            default:
+                break;
         }
     }
 
@@ -54,7 +52,7 @@ class Counter extends Component {
                 <CounterControl label="Add 5" clicked={() => this.counterChangedHandler( 'add', 5 )}  />
                 <CounterControl label="Subtract 5" clicked={() => this.counterChangedHandler( 'sub', 5 )}  />
                 <hr />
-                <button onClick={this.props.addResult}>Add result</button>
+                <button onClick={()=>this.props.addResult(this.props.counterValue)}>Add result</button>
                 <ul>
                     {this.props.resultsValue.map((result)=>{
                         return (
@@ -69,8 +67,8 @@ class Counter extends Component {
 
 const mapStateToProps = (state)=>{
     return {
-        counterValue: state.counter,
-        resultsValue: state.results
+        counterValue: state.counter.counter,
+        resultsValue: state.results.results
     }
 }    
 
@@ -78,30 +76,30 @@ const mapDispatchToProps = (dispatch)=>{
     return{
             incCounter: ()=>{
                 dispatch({
-                    type: 'INC_COUNTER'
+                    type: ACTIONS.INC_COUNTER
                 })
             },
             decCounter: ()=>{
                 dispatch({
-                    type: 'DEC_COUNTER'
+                    type: ACTIONS.DEC_COUNTER
                 })
             },
             addCounter: (increment)=>{
                 dispatch(
                     { 
-                        type: 'ADD_COUNTER', 
+                        type: ACTIONS.ADD_COUNTER,
                         payload: increment
                     }
                 )        
             },
             subCounter: (decrement)=>{
                 dispatch({
-                    type: 'SUB_COUNTER',
+                    type: ACTIONS.SUB_COUNTER,
                     payload: decrement
                 })
             },
-            addResult: ()=>dispatch({type:'ADD_RESULT'}),
-            removeResult: (id)=>dispatch({type:'REMOVE_RESULT', payload: id})
+            addResult: (id)=>dispatch({type:ACTIONS.ADD_RESULT, payload: id}),
+            removeResult: (id)=>dispatch({type:ACTIONS.REMOVE_RESULT, payload: id})
     }
 }
 
